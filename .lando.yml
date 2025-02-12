@@ -1,0 +1,87 @@
+# Replace minecraft-docker with the name of your app from .lando.yml
+name: minecraft-docker
+recipe: laravel
+config:
+  via: nginx
+  php: 8.3
+  database: mysql:8.0
+  webroot: public
+services:
+  # If you want to manage the MySQL database
+  phpmyadmin:
+    name: phpmyadmin
+    type: phpmyadmin
+  # If you want to simulate an S3 storage locally
+  # > configure proxy below as well
+  minio:
+    type: lando
+    app_mount: false
+    ssl: true
+    services:
+      image: bitnami/minio
+      command: /opt/bitnami/scripts/minio/entrypoint.sh /opt/bitnami/scripts/minio/run.sh
+      volumes:
+        - minio_data:/bitnami/minio/data
+      environment:
+        - MINIO_ROOT_USER=minio
+        - MINIO_ROOT_PASSWORD=miniosecret
+        - MINIO_DEFAULT_BUCKETS=laravel
+    volumes: 
+      minio_data:
+        driver: local
+    scanner:
+      okCodes:
+        - 200
+        - 403
+  # If you want to simulate mail sending locally
+  # > configure proxy below as well
+  mailpit:
+    name: mailpit
+    type: lando
+    app_mount: false
+    ssl: true
+    sslExpose: false
+    services:
+      image: axllent/mailpit
+      command: /mailpit
+      environment:
+        - MP_DATABASE=/data/mailpit.db
+      volumes:
+        - mailpit:/data
+    volumes:
+      mailpit:
+        driver: local
+  # If you want to use vite in your Laravel project
+  # > remove tooling below if you don't need it
+  node:
+    name: node
+    type: node:18
+    ports:
+      - 5173:5173 # check that your port matches the one in vite.config.js
+  redis:
+    name: redis
+    type: redis
+proxy:
+  minio:
+    - s3-minecraft-docker.lndo.site:9000
+    - s3admin-minecraft-docker.lndo.site:9001
+  mailpit:
+    - mailpit-minecraft-docker.lndo.site:8025
+# if you use node, these below will configure the shortcuts
+#  - lando dev => npm run dev in the node container
+#  - lando build => npm run build in the node container
+tooling:
+  npmi:
+    service: node
+    cmd: npm install
+  dev:
+    service: node
+    cmd: npm run dev
+  build:
+    service: node
+    cmd: npm run build
+  # /!\ The clean operation is not configured by default 
+  #     in the package.json
+  clean:
+    service: node
+    cmd: npm run clean
