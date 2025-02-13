@@ -7,6 +7,7 @@ use Psr\Http\Message\ResponseInterface;
 use React\Http\Browser;
 use React\Socket\FixedUriConnector;
 use React\Socket\UnixConnector;
+use function React\Async\await;
 
 
 class Container 
@@ -18,114 +19,93 @@ class Container
     public function __construct($id) 
     {
         $this->id = $id;
-        $this->connector = new FixedUriConnector(
-            'unix:///var/run/docker.sock',
-            new UnixConnector()
-        );
-        $this->browser = new Browser($this->connector);
-    
+        $connection = Docker::connect();
+        $this->connector = $connection->connector;
+        $this->browser = $connection->browser;
     }
 
     public function getId() { return $this->id; }
 
-    public function start($context) 
+    public function start() 
     {
-        $context = $context ?? [ "onSucces" => function() {}, "onError" => function() {}];
         try {
-            $this->browser->post("http://localhost/containers/" . $this->id . "/start", [ "Content-Type" => "text/plain" ])
-            ->then(function(ResponseInterface $response) use($context) {
-                $data = json_decode($response->getBody());
-                return $context["onSucces"]($this, $data);
-            }, function($e) use($context) {
-                return $context["onError"]($e);
-            });
+            $response = await($this->browser->post(Docker::endpoint("/containers/" . $this->id . "/start"), [
+                 "Content-Type" => "text/plain" 
+            ]));
+            return json_decode($response->getBody());
         } catch (Exception $e) {
-            return $context["onError"]($e);
+            throw $e;
         }
     }
 
     public function restart($context) 
     {
-        $context = $context ?? [ "onSucces" => function() {}, "onError" => function() {}];
+        $context = $context ?? [ "onSuccess" => function() {}, "onError" => function() {}];
         try {
-            $this->browser->post("http://localhost/containers/" . $this->id . "/restart", [ "Content-Type" => "text/plain" ])
-            ->then(function(ResponseInterface $response) use($context) {
-                $data = json_decode($response->getBody());
-                return $context["onSucces"]($this, $data);
-            }, function($e) use($context) {
-                return $context["onError"]($e);
-            });
+            $response = await($this->browser->post(
+                Docker::endpoint("/containers/" . $this->id . "/restart"), 
+                [ "Content-Type" => "text/plain" ]
+            ));
+            return json_decode($response->getBody());
         } catch (Exception $e) {
-            return $context["onError"]($e);
+            throw $e;
         }
     }
 
     public function stop($context) 
     {
-        $context = $context ?? [ "onSucces" => function() {}, "onError" => function() {}];
+        $context = $context ?? [ "onSuccess" => function() {}, "onError" => function() {}];
         try {
-            $this->browser->post("http://localhost/containers/" . $this->id . "/stop", [ "Content-Type" => "text/plain" ])
-            ->then(function(ResponseInterface $response) use($context) {
-                $data = json_decode($response->getBody());
-                return $context["onSucces"]($this, $data);
-            }, function($e) use($context) {
-                return $context["onError"]($e);
-            });
+            $response = await($this->browser->post(
+                Docker::endpoint("/containers/" . $this->id . "/stop"), 
+                [ "Content-Type" => "text/plain" ]
+            ));
+            return json_decode($response->getBody());
         } catch (Exception $e) {
-            return $context["onError"]($e);
+            throw $e;
         }
     }
 
     public function kill($context) 
     {
-        $context = $context ?? [ "onSucces" => function() {}, "onError" => function() {}];
+        $context = $context ?? [ "onSuccess" => function() {}, "onError" => function() {}];
         try {
-            $this->browser->post("http://localhost/containers/" . $this->id . "/kill", [ "Content-Type" => "text/plain" ])
-            ->then(function(ResponseInterface $response) use($context) {
-                $data = json_decode($response->getBody());
-                return $context["onSucces"]($this, $data);
-            }, function($e) use($context) {
-                return $context["onError"]($e);
-            });
+            $response = await($this->browser->post(
+                Docker::endpoint("/containers/" . $this->id . "/kill"), 
+                [ "Content-Type" => "text/plain" ]
+            ));
+            return json_decode($response->getBody());
         } catch (Exception $e) {
-            return $context["onError"]($e);
+            throw $e;
         }
     }
 
-    public function inspect($context)
+    public function inspect($size = false)
     {
-        $context = $context ?? [ "onSucces" => function() {}, "onError" => function() {}];
         try {
-            $this->browser->post("http://localhost/containers/" . $this->id . "/json?size=" . $context["size"] ?? false, [ "Content-Type" => "text/plain" ])
-            ->then(function(ResponseInterface $response) use($context) {
-                $data = json_decode($response->getBody());
-                return $context["onSucces"]($this, $data);
-            }, function($e) use($context) {
-                return $context["onError"]($e);
-            });
+            $response = await($this->browser->post(
+                Docker::endpoint("/containers/" . $this->id . "/json?size=" . $size), 
+                [ "Content-Type" => "text/plain" ]
+            ));
+            return json_decode($response->getBody());
         } catch (Exception $e) {
-            return $context["onError"]($e);
+            throw $e;
         }
     }
 
-    public static function create($name, $config, $context)
+    public static function create($name, $config)
     {
-        $context = $context ?? [ "onSucces" => function() {}, "onError" => function() {}];
         try {
-            $connector = new FixedUriConnector(
-                'unix:///var/run/docker.sock',
-                new UnixConnector()
-            );
-            $browser = new Browser($connector);
-            
-            $browser->post('http://localhost/containers/create?name='. $name, [ "Content-Type" => "application/json" ], json_encode($config))
-            ->then(function (ResponseInterface $response) use($context) {
-                $data = json_decode($response->getBody());
-                $container = new Container($data->Id);
-                return $context["onSucces"]($container);
-            }, $context["onError"]);
+            $connection = Docker::connect();
+            $response = await($connection->browser->post(Docker::endpoint('/containers/create?name='. $name), 
+                [ "Content-Type" => "application/json" ], 
+                json_encode($config)
+            ));
+            $data = json_decode($response->getBody());
+            $container = new Container($data->Id);
+            return $container;
         } catch (Exception $e) {
-            return $context["onError"]($e);
+            throw $e;
         }
     }
 }

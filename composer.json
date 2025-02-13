@@ -11,6 +11,7 @@
         "laravel/framework": "^11.31",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.9",
+        "react/async": "^4.3",
         "react/http": "^1.11",
         "react/react": "^1.0",
         "tightenco/ziggy": "^2.0"
