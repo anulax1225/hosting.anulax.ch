@@ -5,7 +5,7 @@ import { Link } from '@inertiajs/vue3';
 
 <template>
     <nav class="fixed top-0 right-0 left-0 h-16 w-full z-40">
-        <div class="w-full h-full bg-gray-900/50 flex items-center justify-between px-[10%]">
+        <div class="w-full h-full bg-gray-800/15 flex items-center justify-between px-[10%]">
             <div class="flex text-lg text-textColor-100 items-center font-medium">
                 <Link :href="route('home')" class="mr-4"><img src="/img/logo.svg" class="rotate-180 h-11"></Link>
                 <Link :href="route('home')" class="mr-5">Home</Link>
@@ -19,7 +19,7 @@ import { Link } from '@inertiajs/vue3';
         </div>
     </nav>
     <main class="w-full max-h-full overflow-y-auto text-white">
-        <div class="w-full h-56 flex items-center justify-between overflow-hidden">
+        <div class="w-full h-80 flex items-center justify-between overflow-hidden">
             <img src="/img/cover.avif" class="w-full">
         </div>
         <slot />
