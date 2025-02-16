@@ -77,8 +77,15 @@ const submit = () => {
                     >
                 </label>
             </div>
-
-            <div class="mt-4 flex items-center justify-end">
+            <div class="flex justify-between items-center mt-4">
+                <Link
+                    v-if="canResetPassword"
+                    :href="route('register')"
+                    class="rounded-md text-sm text-textColor-600 underline hover:text-textColor-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                >
+                    New account
+                </Link>
+                <div class="flex items-center justify-end">
                 <Link
                     v-if="canResetPassword"
                     :href="route('password.request')"
@@ -95,6 +102,9 @@ const submit = () => {
                     Log in
                 </PrimaryButton>
             </div>
+            </div>
+
+
         </form>
     </GuestLayout>
 </template>

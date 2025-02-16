@@ -1,0 +1,27 @@
+{
+    "Hostname": "mincraft-server",
+    "User": "root",
+    "Image": "minecraftbedrock:latest",
+    "OpenStdin": true,
+    "AttachStdout": false,
+    "AttachStderr": false,
+    "Tty": true,
+    "ExposedPorts": {
+        "19132/udp": {},
+        "19133/udp": {}
+    },
+    "HostConfig": {
+        "PortBindings": {
+            "19132/udp": [
+                {
+                    "HostPort": 25004
+                }
+            ],
+            "19133/udp": [
+                {
+                    "HostPort": 25005
+                }
+            ]
+        }
+    }
+} 

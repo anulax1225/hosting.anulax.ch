@@ -9,3 +9,44 @@
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
+    /* Nouvelle animation : rotation au survol */
+.rotate-on-hover {
+transition: transform 0.5s ease-in-out;
+}
+.rotate-on-hover:hover {
+transform: rotate(360deg);
+}
+
+@keyframes pulse {
+0%, 100% { transform: scale(1); }
+50% { transform: scale(1.05); }
+}
+.pulse {
+animation: pulse 2s infinite;
+}
+/* Nouvelle animation : Bounce */
+@keyframes bounce {
+0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+40% { transform: translateY(-20px); }
+60% { transform: translateY(-10px); }
+}
+.bounce {
+    animation: bounce 2s infinite;
+}
+/* Nouvelle animation : Shake */
+@keyframes shake {
+0%, 100% { transform: translateX(0); }
+25% { transform: translateX(-5px); }
+75% { transform: translateX(5px); }
+}
+.shake {
+animation: shake 0.5s ease-in-out;
+}
+/* Nouvelle animation : Glow on hover */
+.glow-on-hover {
+    transition: box-shadow transform 0.1s ease-in-out;
+}
+.glow-on-hover:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 2px 2px rgba(51, 51, 51, 0.8);
+}

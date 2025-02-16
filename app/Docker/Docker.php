@@ -6,21 +6,24 @@ use Exception;
 use Psr\Http\Message\ResponseInterface;
 use React\Http\Browser;
 use React\Socket\FixedUriConnector;
-use React\Socket\ConnectorInterFace;
+use React\Socket\Connector;
 use React\Socket\UnixConnector;
 use function React\Async\await;
 
 
 class Docker 
 {
+    static protected $connection = null;
+
     public static function connect($fromSocket = true, $socket = 'unix:///var/run/docker.sock')
     {
         $connector = $fromSocket ? new FixedUriConnector(
             $socket,
             new UnixConnector()
-        ) : new ConnectorInterface();
+        ) : null;
         $browser = new Browser($connector);
-        return (object)[ "connector" => $connector, "browser" => $browser ];
+        Docker::$connection = (object)[ "connector" => $connector, "browser" => $browser ];
+        return Docker::$connection;
     }
 
     public static function endpoint($url)

@@ -3,6 +3,7 @@
 namespace App\Docker;
 
 use Exception;
+use Illuminate\Support\Facades\Log;
 use Psr\Http\Message\ResponseInterface;
 use React\Http\Browser;
 use React\Socket\FixedUriConnector;
@@ -83,11 +84,42 @@ class Container
     public function inspect($size = false)
     {
         try {
-            $response = await($this->browser->post(
+            $response = await($this->browser->get(
                 Docker::endpoint("/containers/" . $this->id . "/json?size=" . $size), 
                 [ "Content-Type" => "text/plain" ]
             ));
             return json_decode($response->getBody());
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
+    public function logs($args = [])
+    {
+        try {
+            $response = await($this->browser->requestStreaming("GET",
+                Docker::endpoint("/containers/" . $this->id . "/logs?stdout=true?stderr=true"), 
+                [ "Content-Type" => "text/plain" ]
+            ));
+            return $response->getBody();
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
+    public function exec($command)
+    {
+        try {
+            $response = await($this->browser->post(
+                Docker::endpoint("/containers/" . $this->id . "/exec"), 
+                [ "Content-Type" => "application/json" ],
+                json_encode([
+                    'AttachStdout' => true,
+                    'AttachStderr' => true,
+                    'Cmd' => $command
+                ])
+            ));
+            return new Exec(json_decode($response->getBody())->Id);
         } catch (Exception $e) {
             throw $e;
         }
@@ -99,7 +131,7 @@ class Container
             $connection = Docker::connect();
             $response = await($connection->browser->post(Docker::endpoint('/containers/create?name='. $name), 
                 [ "Content-Type" => "application/json" ], 
-                json_encode($config)
+                json_encode($config, JSON_UNESCAPED_SLASHES)
             ));
             $data = json_decode($response->getBody());
             $container = new Container($data->Id);

@@ -1,0 +1,11 @@
+mkdir -p icons && cd icons
+
+# Télécharger les icônes (vérifie que ces URL correspondent bien aux fichiers SVG)
+wget -O server-icon.svg "https://www.svgrepo.com/download/452095/server.svg"
+wget -O security-icon.svg "https://www.svgrepo.com/download/488474/security-shield.svg"
+wget -O process-icon.svg "https://www.svgrepo.com/download/444524/process.svg"
+wget -O create-icon.svg "https://www.svgrepo.com/download/513806/add.svg"
+wget -O play-icon.svg "https://www.svgrepo.com/download/488502/play-button.svg"
+wget -O auto-icon.svg "https://www.svgrepo.com/download/456246/automation.svg"
+wget -O rocket-icon.svg "https://www.svgrepo.com/download/488478/rocket.svg"
+wget -O arrow-icon.svg "https://www.svgrepo.com/download/502744/arrow-right.svg"

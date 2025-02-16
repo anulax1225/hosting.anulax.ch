@@ -2,18 +2,29 @@
 import { Head, Link } from '@inertiajs/vue3';
 import Layout from '@/Layouts/Layout.vue';
 
+const props = defineProps({
+    services: {
+        type: Object,
+        default: []
+    }
+});
+
 </script>
 
 <template>
     <Head title="Welcome" />
     <Layout>
-    <header class="text-center py-20">
-        <h1 class="text-4xl font-bold animate-fade-in">Bienvenue sur Minecraft Hosting</h1>
-        <p class="text-gray-300 max-w-3xl mx-auto mt-4 animate-fade-in">Un service gratuit permettant d'héberger facilement vos serveurs Minecraft dans des conteneurs Docker sécurisés et performants.</p>
+    <header class="text-center my-10">
+        <h1 class="text-4xl font-bold fade-in flex justify-center items-center gap-2">
+            <img src="/icons/server-icon.svg" alt="Serveur" class="w-12 h-12 invert"> Bienvenue sur Hosting
+        </h1>
+        <p class="text-gray-300 max-w-3xl mx-auto mt-4 fade-in">Un service gratuit permettant d'héberger facilement vos serveurs dans des conteneurs Docker sécurisés et performants.</p>
     </header>
     
-    <section class="max-w-4xl mx-auto bg-gray-800 p-6 rounded-lg shadow-lg animate-slide-up">
-        <h2 class="text-2xl font-bold mb-4">Pourquoi choisir notre hébergement ?</h2>
+    <section class="max-w-4xl mx-auto bg-gray-800 p-6 rounded-lg shadow-lg slide-up">
+        <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">
+            <img src="/icons/security-icon.svg" alt="Sécurité" class="w-6 h-6 invert">Comment fonctionne notre hébergement ?
+        </h2>
         <ul class="list-disc list-inside text-gray-300">
             <li>Infrastructure basée sur Docker pour une isolation et une sécurité optimales.</li>
             <li>Stockage limité à 10 Go par serveur pour éviter toute surcharge.</li>
@@ -23,28 +34,45 @@ import Layout from '@/Layouts/Layout.vue';
     </section>
     
     <section class="mt-10 text-center">
-        <h2 class="text-2xl font-bold mb-4 animate-fade-in">Comment ça fonctionne ?</h2>
-        <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 animate-slide-up">
-            <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+        <h2 class="text-2xl font-bold mb-4 fade-in flex justify-center items-center gap-2">
+            <img src="/icons/process-icon.svg" alt="Processus" class="w-7 h-7 invert">Démarche à sur suivre ?
+        </h2>
+        <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 slide-up">
+            <div class="bg-gray-800 p-6 rounded-lg shadow-lg flex flex-col items-center">
+                <img src="/icons/start-icon.svg" alt="Créer" class="w-14 h-14 mb-2 invert">
                 <h3 class="text-xl font-semibold">1. Créez votre serveur</h3>
                 <p class="text-gray-300">Remplissez un simple formulaire pour générer votre serveur.</p>
             </div>
-            <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+            <div class="bg-gray-800 p-6 rounded-lg shadow-lg flex flex-col items-center">
+                <img src="/icons/play-icon.svg" alt="Lancer" class="w-14 h-14 mb-2 invert">
                 <h3 class="text-xl font-semibold">2. Lancez et jouez</h3>
                 <p class="text-gray-300">Votre serveur est déployé instantanément et prêt à être rejoint.</p>
             </div>
-            <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+            <div class="bg-gray-800 p-6 rounded-lg shadow-lg flex flex-col items-center">
+                <img src="/icons/auto-icon.svg" alt="Auto-gestion" class="w-14 h-14 mb-2 invert">
                 <h3 class="text-xl font-semibold">3. Auto-gestion</h3>
                 <p class="text-gray-300">Le serveur s'éteint automatiquement après inactivité pour économiser les ressources.</p>
             </div>
         </div>
     </section>
+    
+    <section class="mt-10 text-center mb-10">
+        <h2 class="text-2xl font-bold mb-4 fade-in flex justify-center items-center gap-2">
+            <img src="/icons/rocket-icon.svg" alt="Démarrer" class="w-7 h-7 invert"> Commencez dès maintenant !
+            
+        </h2>
+        <p class="text-gray-300 mt-4 fade-in">Des performances optimales pour des parties sans lag. Commencez dès maintenant !</p>
+        <Link :href="route('servers.create')" class="mt-6 w-fit mx-auto items-center fade-in flex bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg shadow-md scale-hover">
+            <img src="/icons/arrow-icon.svg" alt="Créer" class="w-5 h-5 rotate-180 invert mr-2 object-cover"> Créer un serveur
+        </Link>
+    </section>
 
-    <section class="max-w-4xl mx-auto text-center bg-cover bg-center fade-in my-10" style="background-image: url('https://source.unsplash.com/1600x900/?minecraft,game');">
-        <div class="w-full bg-gray-800 p-10 inline-block rounded-lg slide-up">
-            <h2 class="text-4xl font-bold">Hébergez votre serveur Minecraft</h2>
-            <p class="text-gray-300 mt-4">Des performances optimales pour des parties sans lag. Commencez dès maintenant !</p>
-            <a href="#offres" class="mt-6 inline-block bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg shadow-md scale-hover">Créer un serveur</a>
+    <p class="text-center text-2xl font-bold mb-4 fade-in">Nos Services</p>
+    <section class="flex justify-center mx-auto mb-10 slide-up">
+        
+        <div v-for="service in props.services" class="relative flex items-center justify-center h-72 max-w-52 overflow-x-hidden bg-black w-full rounded-lg mx-5">
+            <img :src="service.image" class="object-cover h-full">
+            <!-- <p class="absolute bottom-0 right-0 left-0 p-1 text-center bg-gray-950/60 font-extrabold text-gray-300 text-2xl">{{ service.name }}</p> -->
         </div>
     </section>
     </Layout>
