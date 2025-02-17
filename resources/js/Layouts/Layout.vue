@@ -4,7 +4,7 @@ import { Link } from '@inertiajs/vue3';
 </script>
 
 <template>
-    <nav class="fixed top-0 right-0 left-0 h-16 w-full z-40 bg-gray-950/25">
+    <nav class="fixed top-0 right-0 left-0 h-16 w-full z-40 bg-gray-950/45">
         <div class="w-full h-full flex items-center justify-between px-[10%]">
             <div class="flex text-lg text-textColor-100 items-center font-medium">
                 <Link :href="route('home')" class="mr-2"><img src="/img/logo.png" class="h-[6.8rem]"></Link>
@@ -19,7 +19,7 @@ import { Link } from '@inertiajs/vue3';
     </nav>
     <main class="w-full max-h-full overflow-y-auto text-white">
         <div class="w-full h-80 flex items-center justify-between overflow-hidden">
-            <img src="/img/banner.jpg" class="w-full pb-96">
+            <img src="/img/banner.avif" class="w-full pb-72">
         </div>
         <slot />
     </main>
