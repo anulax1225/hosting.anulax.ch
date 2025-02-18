@@ -1,13 +1,34 @@
 <script setup>
-import { Link } from '@inertiajs/vue3';
+import { Link, useForm } from '@inertiajs/vue3';
 
 
 const props = defineProps({
     server: {
         type: Object,
         required: true
+    },
+    editable: {
+        type: Boolean,
+        default: true
     }
-})
+});
+if(props.editable) {
+
+}
+const form = useForm();
+
+const start = (uuid) => {
+  form.post(route("servers.start", uuid), {
+    onSuccess: () => {
+      vm.$forceUpdate()
+    }
+  });
+} 
+
+const stop = (uuid) => {
+  form.post(route("servers.stop", uuid));
+} 
+
 </script>
 
 <template>
@@ -24,24 +45,27 @@ const props = defineProps({
       
       <div class="mt-4 space-y-2 text-sm">
         <p><span class="font-medium">Type </span> {{ props.server.service.name }}</p>
-        <p><span class="font-medium">Dernier démarrage </span> {{ props.server.start ? props.server.start : "aucun" }}</p>
+        <p v-if="props.editable" ><span class="font-medium">Dernier démarrage </span> {{ props.server.start ? props.server.start : "aucun" }}</p>
         <p class="flex gap-2">
           <span class="font-medium">Lien :</span> 
           <p class="text-green-400 hover:underline">
-            {{ props.server.ports.length ? "hosting.anulax.ch:" + props.server.ports[0] : "Indisponible" }}
+            {{ props.server.ports.length && props.server.status.id < 3 ? "hosting.anulax.ch:" + props.server.ports[0] : "Indisponible" }}
           </p>
         </p>
       </div>
       
       <!-- Actions -->
-      <div class="mt-4 flex gap-2 w-full justify-end">
-        <a href="" class="bg-green-500 hover:bg-green-600 text-white font-bold p-2 rounded-lg shadow-lg flex items-center gap-2">
+      <div v-if="props.editable" class="mt-4 flex gap-2 w-full justify-end">
+        <div v-if="props.server.status.id >= 3" @click="start(props.server.uuid)" class="bg-green-500 hover:bg-green-600 text-white f
+          glow-on-hover font-bold p-2 rounded-lg shadow-lg flex items-center gap-2">
           <img src="/icons/start-icon.svg" alt="Start" class="w-5 h-5 invert">
-        </a>
-        <a href="#" class="bg-red-500 hover:bg-red-600 text-white font-bold p-2 rounded-lg shadow-lg flex items-center gap-2">
+        </div>
+        <div v-else @click="stop(props.server.uuid)" class="bg-red-500 hover:bg-red-600 text-white 
+        glow-on-hover font-bold p-2 rounded-lg shadow-lg flex items-center gap-2">
           <img src="/icons/stop-icon.svg" alt="Stop" class="w-5 h-5 invert">
-        </a>
-        <Link :href="route('servers.show', props.server.uuid)" class="bg-blue-500 hover:bg-blue-600 text-white font-bold p-2 rounded-lg shadow-lg flex items-center gap-2">
+        </div>
+        <Link :href="route('servers.show', props.server.uuid)" class="bg-blue-500 hover:bg-blue-600 text-white 
+        glow-on-hover font-bold p-2 rounded-lg shadow-lg flex items-center gap-2">
           <img src="/icons/details-icon.svg" alt="Détails" class="w-5 h-5 invert">
         </Link>
       </div>

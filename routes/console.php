@@ -1,12 +1,24 @@
 <?php
 
 use App\Docker\Container;
+use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Log;
 
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
+})->purpose('Display an inspiring quote');
+
+Artisan::command('create:user {name} {email} {password} {admin}', function ($name, $email, $password, $admin) {
+    User::create([
+        "name" => $name,
+        "email" => $email,
+        "password" => bcrypt($password),
+        "admin" => $admin,
+        "email_verified_at" => Carbon::now()
+    ]);
 })->purpose('Display an inspiring quote');
 
 Artisan::command('exec {id}', function ($id) {

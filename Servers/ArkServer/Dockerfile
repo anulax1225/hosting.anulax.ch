@@ -26,7 +26,5 @@ RUN sudo -u ark -s
 RUN chmod +x ./run.sh
 RUN ulimit -n 100000
 RUN /usr/games/steamcmd +force_install_dir /app +login anonymous +app_update 376030 validate +exit
-#RUN chmod +x ./ShooterGame/Binaries/Linux/ShooterGameServer
-
 
 ENTRYPOINT [ "./run.sh" ]

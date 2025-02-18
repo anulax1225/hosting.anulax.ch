@@ -31,7 +31,7 @@ class Container
     {
         try {
             $response = await($this->browser->post(Docker::endpoint("/containers/" . $this->id . "/start"), [
-                 "Content-Type" => "text/plain" 
+                "Content-Type" => "text/plain" 
             ]));
             return json_decode($response->getBody());
         } catch (Exception $e) {
@@ -39,9 +39,8 @@ class Container
         }
     }
 
-    public function restart($context) 
+    public function restart() 
     {
-        $context = $context ?? [ "onSuccess" => function() {}, "onError" => function() {}];
         try {
             $response = await($this->browser->post(
                 Docker::endpoint("/containers/" . $this->id . "/restart"), 
@@ -53,9 +52,8 @@ class Container
         }
     }
 
-    public function stop($context) 
+    public function stop() 
     {
-        $context = $context ?? [ "onSuccess" => function() {}, "onError" => function() {}];
         try {
             $response = await($this->browser->post(
                 Docker::endpoint("/containers/" . $this->id . "/stop"), 
@@ -67,9 +65,8 @@ class Container
         }
     }
 
-    public function kill($context) 
+    public function kill() 
     {
-        $context = $context ?? [ "onSuccess" => function() {}, "onError" => function() {}];
         try {
             $response = await($this->browser->post(
                 Docker::endpoint("/containers/" . $this->id . "/kill"), 

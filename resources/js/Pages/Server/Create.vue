@@ -18,7 +18,7 @@ const props = defineProps({
 const form = useForm({
     name: "",
     service: props.services[0].uuid,
-    port: "",
+    launch: false,
 });
 
 const formatPort = computed(() => {
@@ -49,15 +49,18 @@ console.log();
                 <TextInput v-model="form.name" type="text" class="w-full p-3 rounded bg-gray-700 text-white" placeholder="Server name"></TextInput>
                 <InputError :message="form.errors.name" class="text-left mt-1"></InputError>
             </div>
-            <div class="mb-10">
+            <div class="mb-4">
                 <InputLabel class="block text-left text-gray-300 mb-2" for="service">Service</InputLabel>
                 <select @change="e => form.service = e.target.value" 
                 class="w-full p-3 rounded bg-gray-700 text-white border-gray-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                 <option v-for="service in props.services" :value="service.uuid">{{ service.name }}</option>
-
                 </select>
             </div>
             <InputError :message="form.errors.service" class="text-left mt-1"></InputError>
+            <div class="flex items-center mb-6">
+                <p class="text-textColor-700 mr-3">Lancer maintenant</p>
+                <input type="checkbox" class="rounded bg-gray-500" @click="() => form.launch = !form.launch">
+            </div>
             <button type="submit" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg shadow-md scale-hover">Créer le Serveur</button>
         </form>
     </section>

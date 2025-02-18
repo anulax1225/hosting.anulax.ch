@@ -16,6 +16,7 @@ return new class extends Migration
             $table->uuid("uuid");
             $table->string("container", 511)->nullable();
             $table->string("name");
+            $table->boolean("public")->default(false);
             $table->dateTime("start")->nullable();
             $table->dateTime("end")->nullable();
             $table->unsignedBigInteger("service_id");

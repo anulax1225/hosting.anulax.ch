@@ -15,12 +15,16 @@ class InitServer implements ShouldQueue
     use Queueable;
 
     protected $server;
+    protected $config;
+    protected $launch;
     /**
      * Create a new job instance.
      */
-    public function __construct($server)
+    public function __construct($server, $config, $launch)
     {
         $this->server = $server;
+        $this->launch = $launch;
+        $this->config = $config;
         $server->update(["status_id" => 2]);
     }
 
@@ -30,24 +34,22 @@ class InitServer implements ShouldQueue
     public function handle(): void
     {
         try {
-            $config = config($this->server->service->config);
-            $ports = explode("|", $this->server->service->ports);
-            for ($i = 0; $i < count($ports); $i++) {
-                $port = ExposedPort::where("usable", true)->first();
-                if(!$port) throw new Exception("All ports are used, please try later.");
-                $this->server->exposedPorts()->attach($port->id);
-                $port->update(["usable" => false]);
-                $config["ExposedPorts"][$ports[$i] . "/" . $this->server->service->protocol] = (object)[];
-                $config["HostConfig"]["PortBindings"][$ports[$i] . "/" . $this->server->service->protocol] = [[ "HostPort" =>  "" . $port->number ]];
+            $container = Container::create($this->server->name . Str::random(5), $this->config);
+            if($this->launch) {
+                $container->start();
+                $this->server->update([
+                    "container" => $container->getId(),
+                    "status_id" => 1,
+                    "start" => now(),
+                    "end" => now()
+                ]);
+            } else {
+                $this->server->update([
+                    "container" => $container->getId(),
+                    "status_id" => 3,
+                    "end" => now()
+                ]);
             }
-            Log::info(json_encode($config, JSON_UNESCAPED_SLASHES));
-            $container = Container::create($this->server->name . Str::random(5), $config);
-            $container->start();
-            $this->server->update([
-                "container" => $container->getId(),
-                "status_id" => 1,
-                "start" => now()
-            ]);
         }catch(Exception $e) {
             $this->fail($e);
         }
@@ -57,9 +59,8 @@ class InitServer implements ShouldQueue
     {
         $this->server->update([
             "status_id" => 4,
-            "end" => now()
         ]);
         $this->server->exposedPorts()->detach();
-        Log::info($e->getResponse()->getBody());
+        Log::info(((object)$e)->getResponse()->getBody());
     }
 }

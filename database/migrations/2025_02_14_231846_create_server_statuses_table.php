@@ -35,6 +35,11 @@ return new class extends Migration
         ]);
 
         Status::create([
+            "title" => "Stopping",
+            "message" => "",
+        ]);
+
+        Status::create([
             "title" => "Failed",
             "message" => "",
         ]);

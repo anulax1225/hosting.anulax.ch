@@ -1,6 +1,6 @@
 <script setup>
 import Layout from '@/Layouts/Layout.vue';
-import { Head } from '@inertiajs/vue3';
+import { Head, useForm } from '@inertiajs/vue3';
 import ServerElement from './Paritals/ServerElement.vue';
 
 const props = defineProps({
@@ -18,7 +18,7 @@ const props = defineProps({
     <!-- En-tête -->
   <header class="max-w-6xl mx-auto my-10 text-center">
     <h1 class="text-3xl font-bold animate-fade-in">Liste des Serveurs</h1>
-    <p class="text-gray-400 mt-2">Gérez vos serveurs Minecraft, Ark, Rust et plus encore.</p>
+    <p class="text-gray-400 mt-2">Gérez vos serveurs Minecraft, Ark et plus encore (Minecraft).</p>
   </header>
 
   <!-- Liste des serveurs -->

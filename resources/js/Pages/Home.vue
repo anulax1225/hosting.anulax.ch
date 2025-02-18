@@ -1,10 +1,15 @@
 <script setup>
 import { Head, Link } from '@inertiajs/vue3';
 import Layout from '@/Layouts/Layout.vue';
+import ServerElement from './Server/Paritals/ServerElement.vue';
 
 const props = defineProps({
     services: {
-        type: Object,
+        type: Array,
+        default: []
+    },
+    servers: {
+        type: Array,
         default: []
     }
 });
@@ -20,6 +25,13 @@ const props = defineProps({
         </h1>
         <p class="text-gray-300 max-w-3xl mx-auto mt-4 fade-in">Un service gratuit permettant d'héberger facilement vos serveurs dans des conteneurs Docker sécurisés et performants.</p>
     </header>
+    <p class="text-center text-2xl font-bold mb-4 fade-in">Nos Services</p>
+    <section class="flex justify-center mx-auto mb-10 slide-up">
+        <div v-for="service in props.services" class="relative flex items-center justify-center h-72 max-w-52 overflow-x-hidden bg-black w-full rounded-lg mx-5">
+            <img :src="service.image" class="object-cover h-full">
+            <!-- <p class="absolute bottom-0 right-0 left-0 p-1 text-center bg-gray-950/60 font-extrabold text-gray-300 text-2xl">{{ service.name }}</p> -->
+        </div>
+    </section>
     
     <section class="max-w-4xl mx-auto bg-gray-800 p-6 rounded-lg shadow-lg slide-up">
         <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">
@@ -66,14 +78,8 @@ const props = defineProps({
             <img src="/icons/arrow-icon.svg" alt="Créer" class="w-5 h-5 rotate-180 invert mr-2 object-cover"> Créer un serveur
         </Link>
     </section>
-
-    <p class="text-center text-2xl font-bold mb-4 fade-in">Nos Services</p>
-    <section class="flex justify-center mx-auto mb-10 slide-up">
-        
-        <div v-for="service in props.services" class="relative flex items-center justify-center h-72 max-w-52 overflow-x-hidden bg-black w-full rounded-lg mx-5">
-            <img :src="service.image" class="object-cover h-full">
-            <!-- <p class="absolute bottom-0 right-0 left-0 p-1 text-center bg-gray-950/60 font-extrabold text-gray-300 text-2xl">{{ service.name }}</p> -->
-        </div>
+    <section class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2  gap-6 my-10">
+        <ServerElement v-for="server in props.servers" :server="server" :editable="false"/>
     </section>
     </Layout>
 </template>

@@ -3,6 +3,8 @@ use App\Docker\Docker;
 use App\Docker\Container;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ServerController;
+use App\Http\Middleware\ResourceRules;
+use App\Models\Server;
 use App\Models\Service;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
@@ -18,7 +20,9 @@ use React\Socket\UnixConnector;
 
 Route::get('/', function () {
     return Inertia::render('Home', [
-        "services" => Service::all()
+        "banner" => "/img/banner.avif",
+        "services" => Service::all(),
+        "servers" => Server::where("public", true)->get()->jsonSerialize()
     ]);
 })->name("home");
 
@@ -27,15 +31,20 @@ Route::get("/info", function() {
     return Inertia::render('Info', [ "config" => $config ]);
 })->name("docker.info");
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
 Route::middleware(['auth'])->group(function () {
     Route::get("/servers/create", [ServerController::class, 'create'])->name("servers.create");
     Route::post("/servers", [ServerController::class, 'store'])->name("servers.store");
     Route::get("/servers", [ServerController::class, 'index'])->name("servers.index");
-    Route::get("/servers/{id}", [ServerController::class, 'show'])->name("servers.show");
+
+    Route::middleware(ResourceRules::class)->group(function() {
+        Route::get("/servers/{id}", [ServerController::class, 'show'])->name("servers.show");
+        Route::post("/servers/{id}/update", [ServerController::class, 'update'])->name("servers.update");
+        Route::post("/servers/{id}/public", [ServerController::class, 'makePublic'])->name("servers.public");
+        Route::delete("/servers/{id}", [ServerController::class, 'destroy'])->name("servers.destroy");
+        Route::post("/servers/{id}/start", [ServerController::class, 'start'])->name("servers.start");
+        Route::post("/servers/{id}/stop", [ServerController::class, 'stop'])->name("servers.stop");
+    });
+
     
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

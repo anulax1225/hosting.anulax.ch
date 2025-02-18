@@ -1,6 +1,6 @@
 <script setup>
 import Checkbox from '@/Components/Checkbox.vue';
-import GuestLayout from '@/Layouts/GuestLayout.vue';
+import Layout from '@/Layouts/Layout.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
@@ -30,81 +30,64 @@ const submit = () => {
 </script>
 
 <template>
-    <GuestLayout>
-        <Head title="Log in" />
+    <Layout>
+        <div class="w-full h-screen flex items-center justify-center">
+            <div class="w-full max-w-md bg-gray-800 p-8 rounded-lg shadow-lg fade-in">
+            <!-- Boutons de bascule -->
+            <!-- <div class="flex justify-end mb-6">
+                <Link class="rounded-md text-sm text-textColor-600 underline hover:text-textColor-900 
+                focus:outline-none">Inscription</Link>
+            </div> -->
 
-        <div v-if="status" class="mb-4 text-sm font-medium text-green-600">
-            {{ status }}
-        </div>
-
-        <form @submit.prevent="submit">
-            <div>
-                <InputLabel for="email" value="Email" />
-
-                <TextInput
-                    id="email"
-                    type="email"
-                    class="mt-1 block w-full"
-                    v-model="form.email"
-                    required
-                    autofocus
-                    autocomplete="username"
-                />
-
+            <!-- Formulaire de Connexion -->
+            <form @submit.prevent="submit" class=" space-y-4 my-2 pt-1">
+                <div class="flex items-center rounded-lg">
+                    <img src="/icons/user.svg" alt="User" class="w-6 h-6 mr-1">
+                    <TextInput
+                        id="email"
+                        type="email"
+                        class="block w-full bg-transparent focus:outline-none"
+                        v-model="form.email"
+                        required
+                        autofocus
+                        autocomplete="username"
+                    />
+                </div>
                 <InputError class="mt-2" :message="form.errors.email" />
-            </div>
+                <div class="flex items-center">
+                    <img src="/icons/lock.svg" alt="Lock" class="w-6 h-6 mr-1">
+                    <TextInput
+                        id="password"
+                        type="password"
+                        class="mt-1 block w-full bg-transparent focus:outline-none"
+                        v-model="form.password"
+                        required
+                        autocomplete="current-password"
+                    />
 
-            <div class="mt-4">
-                <InputLabel for="password" value="Password" />
-
-                <TextInput
-                    id="password"
-                    type="password"
-                    class="mt-1 block w-full"
-                    v-model="form.password"
-                    required
-                    autocomplete="current-password"
-                />
-
+                </div>
                 <InputError class="mt-2" :message="form.errors.password" />
-            </div>
-
-            <div class="mt-4 block">
-                <label class="flex items-center">
-                    <Checkbox name="remember" v-model:checked="form.remember" />
-                    <span class="ms-2 text-sm text-textColor-600"
-                        >Remember me</span
+                <button class="w-full bg-green-500 hover:bg-green-600 text-white py-3 rounded-lg shadow-md transition-all">
+                    Se connecter
+                </button>
+                <div class="mt-4 flex items-center justify-between">
+                    <label class="flex items-center">
+                        <Checkbox name="remember" v-model:checked="form.remember" />
+                        <span class="ms-2 text-sm text-textColor-600"
+                            >Remember me</span
+                        >
+                    </label>
+                    <Link
+                        v-if="canResetPassword"
+                        :href="route('password.request')"
+                        class="rounded-md text-sm text-textColor-600 underline hover:text-textColor-900 
+                        focus:outline-none"
                     >
-                </label>
-            </div>
-            <div class="flex justify-between items-center mt-4">
-                <Link
-                    v-if="canResetPassword"
-                    :href="route('register')"
-                    class="rounded-md text-sm text-textColor-600 underline hover:text-textColor-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                >
-                    New account
-                </Link>
-                <div class="flex items-center justify-end">
-                <Link
-                    v-if="canResetPassword"
-                    :href="route('password.request')"
-                    class="rounded-md text-sm text-textColor-600 underline hover:text-textColor-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                >
-                    Forgot your password?
-                </Link>
-
-                <PrimaryButton
-                    class="ms-4"
-                    :class="{ 'opacity-25': form.processing }"
-                    :disabled="form.processing"
-                >
-                    Log in
-                </PrimaryButton>
-            </div>
-            </div>
-
-
-        </form>
-    </GuestLayout>
+                        Forgot your password?
+                    </Link>
+                </div>
+            </form>
+        </div>
+        </div>
+    </Layout>
 </template>
