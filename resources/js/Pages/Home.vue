@@ -21,13 +21,13 @@ const props = defineProps({
     <Layout>
     <header class="text-center my-10">
         <h1 class="text-4xl font-bold fade-in flex justify-center items-center gap-2">
-            <img src="/icons/server-icon.svg" alt="Serveur" class="w-12 h-12 invert"> Bienvenue sur Hosting
+            <img src="/icons/server-icon.svg" alt="Serveur" class="md:block hidden w-12 h-12 invert"> Bienvenue sur Hosting
         </h1>
         <p class="text-gray-300 max-w-3xl mx-auto mt-4 fade-in">Un service gratuit permettant d'héberger facilement vos serveurs dans des conteneurs Docker sécurisés et performants.</p>
     </header>
     <p class="text-center text-2xl font-bold mb-4 fade-in">Nos Services</p>
-    <section class="flex justify-center mx-auto mb-10 slide-up">
-        <div v-for="service in props.services" class="relative flex items-center justify-center h-72 max-w-52 overflow-x-hidden bg-black w-full rounded-lg mx-5">
+    <section class="flex md:flex-row flex-col items-center md:justify-center justify-between mx-auto mb-10 slide-up">
+        <div v-for="service in props.services" class="relative flex items-center justify-center h-72 max-w-52 overflow-x-hidden bg-black w-full rounded-lg my-2 mx-5">
             <img :src="service.image" class="object-cover h-full">
             <!-- <p class="absolute bottom-0 right-0 left-0 p-1 text-center bg-gray-950/60 font-extrabold text-gray-300 text-2xl">{{ service.name }}</p> -->
         </div>

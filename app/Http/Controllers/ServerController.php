@@ -164,11 +164,13 @@ class ServerController extends Controller
     public function destroy(Request $request)
     {
         $server = Server::where("uuid", $request->id)->first();
-        try {
-            $container = new Container($server->container);
-            $data = $container->inspect()->State;
-            if($data->Running || $data->Paused || $data->Restarting) $container->kill();
-        } catch(Exception) { return redirect()->back()->withErrors(["error" => "Problème pour éteindre le serveur. Réessayer!"]); }
+        if($server->container) {
+            try {
+                $container = new Container($server->container);
+                $data = $container->inspect()->State;
+                if($data->Running || $data->Paused || $data->Restarting) $container->kill();
+            } catch(Exception) { return redirect()->back()->withErrors(["error" => "Problème pour éteindre le serveur. Réessayer!"]); }
+        }
         $server->exposedPorts()->update([ "usable" => true ]);
         $server->exposedPorts()->detach();
         $server->delete();

@@ -1,11 +1,15 @@
 <script setup>
 import { Link, usePage } from '@inertiajs/vue3';
+import NavLink from '@/Components/NavLink.vue';
 import { onMounted, onUpdated, ref, watch } from 'vue';
+import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 
 const user = usePage().props.auth.user;
 const banner = usePage().props.banner;
 const message = ref(usePage().props.errors.message);
 const error = ref(usePage().props.errors.error);
+
+const isFocus = ref(false);
 
 onUpdated(() => {
     if(message.value != usePage().props.errors.message) {
@@ -31,24 +35,39 @@ usePage().props.errors.error = null;
 </script>
 
 <template>
-    <nav class="fixed top-0 right-0 left-0 h-16 w-full z-40 bg-gray-950/45">
-        <div class="w-full h-full flex items-center justify-between px-[10%]">
-            <div class="flex text-lg text-textColor-100 items-center font-medium">
-                <Link :href="route('home')" class="mr-2"><img src="/img/logo.png" class="h-[6.8rem]"></Link>
-                <Link :href="route('home')" class="mr-5">Home</Link>
-                <Link :href="route('servers.create')" class="mr-5">Spawn server</Link>
-                <Link v-if="user" :href="'/servers'">Management</Link>
+    <nav class="fixed top-0 right-0 left-0 h-16 w-full z-50 bg-gray-950/45">
+        <div class="w-full h-full flex items-center justify-between lg:px-[10%] md:px-[5%]">
+            
+            <div class="flex text-lg text-textColor-100 items-center font-medium h-full">
+                <Link :href="route('home')" class="md:mr-2"><img src="/img/logo.png" class="md:h-[6.8rem] h-[6.3rem]"></Link>
+                <NavLink :href="route('home')" :active="route().current('home')" class="mr-5 h-full md:flex items-center hidden">Home</NavLink>
+                <NavLink :href="route('servers.create')" :active="route().current('servers.create')" class="mr-5 h-full md:flex items-center hidden">Spawn server</NavLink>
+                <NavLink v-if="user" 
+                :href="route('servers.index')" :active="route().current('servers.index') || route().current('servers.show')" 
+                class="h-full md:flex items-center hidden">Management</NavLink>
             </div>
-            <div v-if="!user" class="flex text-lg text-textColor-300 items-center font-medium">
-                <Link :href="route('login')" class=""><img src="/icons/user.svg" class="h-8 invert"></Link>
+            <div v-if="!user" class="md:flex hidden text-lg text-textColor-300 items-center font-medium md:mr-5 mr-1 h-full">
+                <NavLink :href="route('login')" :active="route().current('login')" class="mr-5 md:flex items-center hidden h-full">Log in</NavLink>
             </div>
-            <div v-else class="flex text-lg text-textColor-300 items-center font-medium">
-                <Link :href="route('logout')"><img src="/icons/logout.svg" class="h-8 invert"></Link>
+            <div v-else class="md:flex hidden text-lg text-textColor-300 items-center font-medium md:mr-5 mr-1 h-full">
+                <NavLink :href="route('logout')" :active="route().current('logout')" class="mr-5 h-full md:flex items-center hidden">Log out</NavLink>
             </div>
+            <button @click="isFocus = !isFocus" class="md:hidden">
+                <img src="/icons/menu.svg" class="h-12 invert mr-1">
+            </button>
         </div>
     </nav>
+    <div v-show="isFocus" class="md:hidden fixed top-0 right-0 left-0 bottom-0 pt-16 w-full z-40 bg-gray-800">
+        <div class="flex flex-col gap-1">
+            <ResponsiveNavLink :href="route('home')" :active="route().current('home')" class="mr-5">Home</ResponsiveNavLink>
+            <ResponsiveNavLink :href="route('servers.create')" :active="route().current('servers.create')" class="mr-5">Spawn server</ResponsiveNavLink>
+            <ResponsiveNavLink v-if="user" :href="route('servers.index')" :active="route().current('servers.index') || route().current('servers.show')">Management</ResponsiveNavLink>
+            <ResponsiveNavLink v-if="!user" :href="route('login')" :active="route().current('login')" class="items-center">Log in</ResponsiveNavLink>
+            <ResponsiveNavLink v-else :href="route('logout')" :active="route().current('logout')" class="items-center">Log out</ResponsiveNavLink>
+        </div>
+    </div>
     <main class="w-full max-h-full overflow-y-auto text-white">
-        <div v-if="banner" class="w-full h-80 flex items-center justify-between overflow-hidden">
+        <div v-if="banner" class="w-full md:h-80 flex items-center justify-between overflow-hidden">
             <img :src="banner" class="w-full pb-20">
         </div>
         <div v-else class="pt-20"></div>
